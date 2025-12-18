@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>湿壁画与圣骸布 - Demo体验</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 字体库 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #D4A574;
+            --cyan: #2DD4BF;
+            --black: #0A0A0A;
+            --bg-dark: #111;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .font-sans { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-serif { font-family: 'Noto Serif SC', serif; }
+        
+        /* 平台卡片样式 */
+        .platform-card {
+            background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--cyan);
+        }
+        
+        /* 视频容器样式 */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0f172a, #1e293b);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+        }
+        
+        /* 自定义滚动条 */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #000; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+        
+        /* 入场动画 */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+        .delay-300 { transition-delay: 0.3s; }
+        .delay-400 { transition-delay: 0.4s; }
+    </style>
+</head>
+
+<body class="bg-black text-gray-200 font-sans selection:bg-cyan-500 selection:text-black">
+
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 top-0 start-0 border-b border-cyan-900/30 bg-black/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between p-4">
+            <a href="index.html" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <span class="self-center text-xl md:text-2xl font-semibold whitespace-nowrap text-cyan-400 font-mono tracking-widest">FRESCO & SHROUD</span>
+            </a>
+            <div class="hidden w-full md:block md:w-auto">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-700 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 font-mono text-sm uppercase">
+                    <li><a href="index.html" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">返回主页</a></li>
+                    <li><a href="#demo" class="block py-2 px-3 text-cyan-400 md:p-0">Demo体验</a></li>
+                    <li><a href="#features" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">章节内容</a></li>
+                    <li><a href="#download" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">下载完整版</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Demo体验区 -->
+    <section id="demo" class="pt-32 pb-20 min-h-screen">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-12 fade-in-up">
+                <h1 class="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-amber-400 mb-4 font-serif">
+                    DEMO视频
+                </h1>
+                <p class="text-xl text-cyan-400 font-mono mb-2">FRESCO & SHROUD - DEMO</p>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    观看《湿壁画与圣骸布》的试玩视频，代入画师洛米尔，在佛罗伦萨教堂中发现世界的异常
+                </p>
+            </div>
+
+            <!-- 视频展示区 -->
+            <div class="mb-16 fade-in-up delay-100">
+                <div class="video-container">
+                    <div class="video-placeholder">
+                        <div class="text-6xl mb-4">🎬</div>
+                        <h3 class="text-2xl font-bold text-gray-300 mb-2">游戏实机演示</h3>
+                        <p class="text-gray-400 mb-6">视频内容加载中...</p>
+                        <div class="flex items-center space-x-4">
+                            <div class="w-3 h-3 rounded-full bg-cyan-500 animate-pulse"></div>
+                            <div class="w-3 h-3 rounded-full bg-cyan-500 animate-pulse delay-100"></div>
+                            <div class="w-3 h-3 rounded-full bg-cyan-500 animate-pulse delay-200"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-sm text-gray-500 font-mono text-center">
+                    // 视频将展示游戏核心玩法：场景探索、角色对话
+                </div>
+            </div>
+
+            <!-- 开始体验按钮 -->
+            <div class="text-center mb-20 fade-in-up delay-200">
+                <div class="inline-flex flex-col items-center">
+                    <a href="#play" class="cyber-btn primary text-lg px-12 py-4 mb-4">
+                        <span class="flex items-center">
+                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            开始Demo体验
+                        </span>
+                    </a>
+                    <p class="text-sm text-gray-500 font-mono">预计体验时长: 5分钟</p>
+                </div>
+            </div>
+
+            <!-- Demo章节内容 -->
+            <div id="features" class="mt-20">
+                <h2 class="text-3xl font-bold text-center text-white mb-12 font-serif fade-in-up">Demo章节内容</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-16">
+                    <div class="fade-in-up">
+                        <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 h-full">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-lg bg-cyan-900/30 flex items-center justify-center mr-4">
+                                    <span class="text-2xl text-cyan-400">🏛️</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">佛罗伦萨教堂探索</h3>
+                                    <p class="text-sm text-gray-400 font-mono">沉浸式环境交互</p>
+                                </div>
+                            </div>
+                            <ul class="space-y-2">
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-cyan-400 mr-3">✦</span>
+                                    <span class="text-gray-300">发现风格错乱的未完成壁画</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-cyan-400 mr-3">✦</span>
+                                    <span class="text-gray-300">倾听莫尔文与埃尔维斯的压抑争吵</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="fade-in-up delay-100">
+                        <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 h-full">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-lg bg-amber-900/30 flex items-center justify-center mr-4">
+                                    <span class="text-2xl text-amber-400">🖌️</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">壁画修复体验</h3>
+                                    <p class="text-sm text-gray-400 font-mono">艺术创作系统</p>
+                                </div>
+                            </div>
+                            <ul class="space-y-2">
+                                <li class="flex items-start">
+                                    <span class="text-amber-400 mr-3">✦</span>
+                                    <span class="text-gray-300">在埃尔维斯指导下完成壁画修复</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-amber-400 mr-3">✦</span>
+                                    <span class="text-gray-300">感受每笔触背后的代码痕迹</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="fade-in-up delay-200">
+                        <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 h-full">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-lg bg-purple-900/30 flex items-center justify-center mr-4">
+                                    <span class="text-2xl text-purple-400">💬</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">多线对话系统</h3>
+                                    <p class="text-sm text-gray-400 font-mono">角色关系发展</p>
+                                </div>
+                            </div>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <span class="text-purple-400 mr-3">✦</span>
+                                    <span class="text-gray-300">与莫尔文的不同对话选择影响关系</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-purple-400 mr-3">✦</span>
+                                    <span class="text-gray-300">理解埃尔维斯深奥的艺术指导</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-purple-400 mr-3">✦</span>
+                                    <span class="text-gray-300">首次与镜中灵的神秘对话</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="fade-in-up delay-300">
+                        <div class="bg-gray-900/50 border border-gray-800 rounded-xl p-6 h-full">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 rounded-lg bg-emerald-900/30 flex items-center justify-center mr-4">
+                                    <span class="text-2xl text-emerald-400">🧠</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">真相的初次揭示</h3>
+                                    <p class="text-sm text-gray-400 font-mono">世界观建立</p>
+                                </div>
+                            </div>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <span class="text-emerald-400 mr-3">✦</span>
+                                    <span class="text-gray-300">体验"人格映射强制关闭"的冲击</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-emerald-400 mr-3">✦</span>
+                                    <span class="text-gray-300">接收破碎的数字记忆碎片</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-emerald-400 mr-3">✦</span>
+                                    <span class="text-gray-300">初次质疑世界的真实性</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 开始游戏区 -->
+            <div id="play" class="mt-20 pt-12 border-t border-gray-800">
+                <div class="terminal-window max-w-3xl mx-auto fade-in-up">
+                    <div class="terminal-header">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        </div>
+                        <div class="text-xs text-gray-400 font-mono">demo_launcher: initialized</div>
+                    </div>
+                    
+                    <div class="p-8 text-center">
+                        <div class="mb-8">
+                            <h3 class="text-2xl font-bold text-white mb-4">准备开始您的觉醒之旅</h3>
+                        </div>
+                        
+                            <a href="index.html" class="inline-block text-cyan-400 hover:text-cyan-300 font-mono text-sm">
+                                返回主页下载完整版 →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-black border-t border-gray-800 py-12">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <span class="text-xl font-semibold text-cyan-400 font-mono tracking-widest">FRESCO & SHROUD</span>
+                    <p class="text-gray-500 text-sm mt-2">湿壁画与圣骸布 - Demo体验版</p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-gray-600 text-sm font-mono">
+                        &copy; 2025 Rinascemento Corp. | 洛斯集团版权所有<br>
+                        第一章"觉醒"Demo | 版本 v1.0.3-DEMO
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 滚动动画
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in-up').forEach(el => {
+                observer.observe(el);
+            });
+            
+            
+        });
+    </script>
+</body>
+</html>

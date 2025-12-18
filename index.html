@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>湿壁画与圣骸布 - 官方网站</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 字体库 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 定义核心颜色变量 */
+        :root {
+            --gold: #D4A574;
+            --cyan: #2DD4BF;
+            --black: #0A0A0A;
+            --bg-dark: #111;
+        }
+
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 字体优化 */
+        .font-sans { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-serif { font-family: 'Noto Serif SC', serif; }
+        
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 900;
+        }
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        /* 核心：背景图蒙版擦除特效 */
+        .hero-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .layer-code {
+            position: absolute; width: 100%; height: 100%;
+            /* 假装加载背景图，实际应用深色代码背景 */
+            background: #000 url('https://placehold.co/1920x1080/000/2DD4BF?text=DATA%20CODE') no-repeat center center; 
+            background-size: cover; 
+            filter: grayscale(80%) brightness(50%);
+        }
+        .layer-fresco {
+            position: absolute; width: 100%; height: 100%;
+            /* 假装加载壁画图，实际应用文艺复兴风格背景 */
+            background: #000 url('https://placehold.co/1920x1080/D4A574/000?text=FRESCO%20MURAL') no-repeat center center; 
+            background-size: cover;
+            /* 核心：通过 mask-image 挖空，露出底层 */
+            mask-image: radial-gradient(circle 200px at var(--cursor-x, 50%) var(--cursor-y, 50%), transparent 0%, black 50%);
+            -webkit-mask-image: radial-gradient(circle 200px at var(--cursor-x, 50%) var(--cursor-y, 50%), transparent 0%, black 50%);
+            transition: mask-image 0.1s ease;
+        }
+        
+        /* 赛博朋克按钮 */
+        .cyber-btn {
+            padding: 1rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            /* 倾斜切角效果 */
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .cyber-btn.primary {
+            background: var(--cyan);
+            color: black;
+            border: 2px solid var(--cyan);
+        }
+        .cyber-btn.primary:hover {
+            background: #fff;
+            box-shadow: 0 0 25px var(--cyan);
+        }
+        .cyber-btn.secondary {
+            background: transparent;
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .cyber-btn.secondary:hover {
+            background: rgba(45, 212, 191, 0.1);
+            box-shadow: 0 0 15px var(--cyan);
+        }
+
+        /* 角色卡片 */
+        .char-card {
+            width: 300px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .char-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.2);
+        }
+        .char-img-box {
+            height: 350px;
+            overflow: hidden;
+            border-bottom: 1px solid #333;
+        }
+        .click-hint {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(45, 212, 191, 0.9);
+            color: black;
+            text-align: center;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .char-card:hover .click-hint {
+            transform: translateY(0);
+        }
+
+        /* 社区终端机风格 */
+        .terminal-window {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            overflow: hidden;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+        .terminal-header {
+            background: #161b22;
+            padding: 10px 15px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .forum-row {
+            padding: 15px;
+            border-bottom: 1px solid #21262d;
+            display: flex;
+            align-items: center;
+            color: #c9d1d9;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .forum-row:hover {
+            background: rgba(45, 212, 191, 0.1);
+        }
+        .tag-sticky { color: var(--gold); margin-right: 8px; font-weight: bold; }
+        .tag-hot { color: #f87171; margin-right: 8px; }
+        .tag-art { color: #a78bfa; margin-right: 8px; }
+        .tag-bug { color: var(--cyan); margin-right: 8px; }
+
+        /* 模态框 (Modal) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-content {
+            width: 90%; max-width: 1100px; height: 80vh;
+            background: #000;
+            border: 1px solid var(--cyan);
+            box-shadow: 0 0 50px rgba(45, 212, 191, 0.3);
+            display: flex; flex-direction: column;
+            position: relative;
+            transform: scale(0.95); transition: transform 0.3s ease;
+        }
+        @media (min-width: 768px) { .modal-content { flex-direction: row; } }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .close-btn {
+            position: absolute; top: 10px; right: 20px;
+            color: #fff; font-size: 2rem; z-index: 50;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-btn:hover { color: var(--cyan); }
+
+        .img-gradient {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 20px;
+            background: linear-gradient(to top, black, transparent);
+        }
+        
+        .modal-header-meta {
+            display: flex; justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem; color: #4b5563;
+            border-bottom: 1px solid #1f2937;
+            padding-bottom: 10px; margin-bottom: 20px;
+        }
+
+        /* 滚动条美化 */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #000; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+        /* 简单的入场动画类 */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 0.1s; }
+        .delay-200 { transition-delay: 0.2s; }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .section-title { font-size: 2rem; }
+            .hero-title { font-size: 4rem; }
+            .modal-content { height: 95vh; flex-direction: column; }
+            .modal-content > div:nth-child(1) { height: 40vh; width: 100%; }
+            .modal-content > div:nth-child(2) { height: 60vh; width: 100%; }
+        }
+    </style>
+</head>
+
+<body class="bg-black text-gray-200 font-sans selection:bg-cyan-500 selection:text-black">
+    <!-- 加载页面 -->
+<div id="loading-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black transition-opacity duration-500">
+    <!-- 背景图片 - 请将 YOUR_BACKGROUND_IMAGE_URL 替换为您的图片URL -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30" 
+         style="background-image: url('fresco-and-shroud/开头.png');"></div>
+    
+    <!-- 加载内容 -->
+    <div class="relative z-10 text-center">
+        <!-- 文字 -->
+        <div class="mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-cyan-400 font-mono mb-2 tracking-widest">
+                人格映射开启中
+            </h1>
+            <p class="text-gray-400 font-mono text-sm md:text-base">
+                PERSONALITY MAPPING INITIALIZING
+            </p>
+        </div>
+        
+        <!-- 进度条容器 -->
+        <div class="w-64 md:w-80 h-2 bg-gray-800 rounded-full overflow-hidden">
+            <!-- 进度条 -->
+            <div id="loading-progress" class="h-full bg-gradient-to-r from-cyan-500 to-cyan-300 rounded-full w-0 transition-all duration-700 ease-out"></div>
+        </div>
+        
+        <!-- 百分比显示 -->
+        <div id="loading-percentage" class="mt-4 text-cyan-400 font-mono text-lg">
+            0%
+        </div>
+        
+        <!-- 小提示 -->
+        <p class="mt-8 text-gray-500 text-xs font-mono max-w-xs">
+            // 警告：人格映射过程不可中断
+        </p>
+    </div>
+</div>
+    <!-- 背景交互层 -->
+    <div class="hero-container" id="hero-bg">
+        <div class="layer-code"></div>
+        <div class="layer-fresco" id="fresco-layer"></div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 top-0 start-0 border-b border-cyan-900/30 bg-black/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between p-4">
+            <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <span class="self-center text-xl md:text-2xl font-semibold whitespace-nowrap text-cyan-400 font-mono tracking-widest">FRESCO & SHROUD</span>
+            </a>
+            <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-700 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 font-mono text-sm uppercase">
+                    <li><a href="#overview" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">游戏概览</a></li>
+                    <li><a href="#characters" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">人物档案</a></li>
+                    <li><a href="#community" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">加密频道</a></li>
+                    <li><a href="#download" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">下载接入</a></li>
+                    <li><a href="#about" class="block py-2 px-3 text-gray-300 hover:text-cyan-400 md:p-0 transition">关于我们</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. 首页 (Hero) -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center px-4 pt-24">
+        <h1 class="hero-title text-6xl md:text-9xl mb-2 text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-500 to-amber-200 drop-shadow-lg">
+            湿壁画与圣骸布
+        </h1>
+        <p class="text-xl md:text-2xl text-cyan-400 font-mono mb-8 tracking-[0.5em]">FRESCO & SHROUD</p>
+        
+        <div class="max-w-2xl bg-black/60 p-6 rounded border border-gray-700 backdrop-blur-sm mb-10 fade-in-up">
+            <p class="text-gray-300 text-lg leading-relaxed font-serif">
+                "当华丽的湿壁画剥落，剩下的空白——就是我们存在的证明。"
+                <br>
+                在<span class="text-yellow-500">文艺复兴的表象</span>之下，揭开<span class="text-cyan-400">赛博世界的源代码</span>。
+            </p>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-6 fade-in-up delay-200">
+            <a href="#download" class="cyber-btn primary">立即接入系统</a>
+            <a href="#overview" class="cyber-btn secondary">查阅档案</a>
+        </div>
+    </section>
+
+        <!-- 2. 游戏介绍 (Overview) - 基于剧本重制 -->
+    <section id="overview" class="py-24 bg-black/90 border-t border-gray-800 relative overflow-hidden">
+        <!-- 装饰背景：壁画纹理 -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-20 left-10 w-64 h-64 bg-gradient-to-br from-cyan-500/20 to-transparent rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-64 h-64 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 relative z-10">
+            <h2 class="section-title text-center mb-4">《湿壁画与圣骸布》核心体验</h2>
+            <p class="text-center text-gray-400 font-mono text-sm mb-16 tracking-widest">// A JOURNEY THROUGH ART, CONSCIENCE, AND CONSCIENCE</p>
+            
+            <!-- 三幕式结构 -->
+            <div class="mb-20 text-center fade-in-up">
+                <div class="inline-flex items-center space-x-8 mb-12">
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-cyan-900/50 border-2 border-cyan-500 flex items-center justify-center mb-2">
+                            <span class="text-cyan-400 font-mono text-lg">Ⅰ</span>
+                        </div>
+                        <span class="text-sm font-mono text-cyan-400">觉醒</span>
+                    </div>
+                    <div class="h-1 w-24 bg-gradient-to-r from-cyan-500/50 to-amber-500/50"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-amber-900/50 border-2 border-amber-500 flex items-center justify-center mb-2">
+                            <span class="text-amber-400 font-mono text-lg">Ⅱ</span>
+                        </div>
+                        <span class="text-sm font-mono text-amber-400">探寻</span>
+                    </div>
+                    <div class="h-1 w-24 bg-gradient-to-r from-amber-500/50 to-purple-500/50"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-purple-900/50 border-2 border-purple-500 flex items-center justify-center mb-2">
+                            <span class="text-purple-400 font-mono text-lg">Ⅲ</span>
+                        </div>
+                        <span class="text-sm font-mono text-purple-400">抉择</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 核心玩法模块 -->
+            <div class="space-y-20">
+                
+                <!-- 第一幕：迷失的画家 -->
+                <div class="gameplay-card fade-in-up">
+                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                        <!-- 左侧：视觉展示 -->
+                        <div class="lg:w-2/5 relative">
+                            <div class="aspect-[4/3] bg-gradient-to-br from-gray-900 to-black rounded-xl overflow-hidden border border-gray-800 shadow-2xl">
+                                <div class="absolute inset-0 bg-[url('fresco-and-shroud/画室.png')] bg-cover bg-center opacity-80"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-6">
+                                    <div class="flex items-center space-x-4 mb-2">
+                                        <div class="w-10 h-10 rounded-full bg-cyan-900/80 flex items-center justify-center">
+
+                                        </div>
+                                        <div>
+                                            <h4 class="text-white font-serif">洛米尔</h4>
+                                            <p class="text-xs text-gray-400 font-mono">拉斐尔人格AI</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-300 italic">"有时候我想画点什么，拿起笔来想法又莫名其妙的消失了..."</p>
+                                </div>
+                            </div>
+                            <div class="absolute -top-3 -right-3 px-3 py-1 bg-cyan-900/80 border border-cyan-500 rounded-full">
+                                <span class="text-xs font-mono text-cyan-300">第一章</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧：玩法描述 -->
+                        <div class="lg:w-3/5">
+                            <div class="flex items-start mb-4">
+                                <div class="mr-4 p-3 bg-cyan-900/30 rounded-lg border border-cyan-500/30">
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white mb-2 font-serif">扮演·迷失的画师</h3>
+                                    <div class="flex flex-wrap gap-2 mb-4">
+                                        <span class="px-3 py-1 bg-cyan-900/30 text-cyan-400 text-xs font-mono rounded-full">角色扮演</span>
+                                        <span class="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-mono rounded-full">场景探索</span>
+                                        <span class="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-mono rounded-full">对话选择</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-gray-300 mb-6 leading-relaxed">
+                                你叫洛米尔，一名文艺复兴时期的画师，受雇于教皇绘制《最后的审判》。但在佛罗伦萨的教堂里，一切都不对劲。空白的画板替代了圣经，未完成的壁画风格错乱，搭档莫尔文总在压抑地争吵。而你脑海中，时常响起不属于自己的声音...
+                            </p>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-cyan-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">探索交互式教堂</h4>
+                                        <p class="text-sm text-gray-400">调查长椅上的空白画板、未完成的《创世纪》壁画、记录着矛盾的工作日志</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-cyan-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">沉浸式绘画体验</h4>
+                                        <p class="text-sm text-gray-400">在埃尔维斯的指导下完成壁画，感受艺术创作的每个细节</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-cyan-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">多线对话系统</h4>
+                                        <p class="text-sm text-gray-400">选择不同的回应方式，影响与莫尔文、埃尔维斯的关系，触发不同的剧情分支</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 第二幕：真相之眼 -->
+                <div class="gameplay-card fade-in-up delay-100">
+                    <div class="flex flex-col lg:flex-row-reverse gap-8 items-center">
+                        <!-- 右侧：视觉展示 -->
+                        <div class="lg:w-2/5 relative">
+                            <div class="aspect-[4/3] bg-gradient-to-br from-gray-900 to-black rounded-xl overflow-hidden border border-gray-800 shadow-2xl">
+                                <div class="absolute inset-0 bg-[url('fresco-and-shroud/魔镜.png')] bg-cover bg-center opacity-80"></div>
+                                <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent"></div>
+                                <div class="absolute top-0 left-0 right-0 p-6">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-10 h-10 rounded-full bg-purple-900/80 flex items-center justify-center">
+                                            </div>
+                                            <div>
+                                                <h4 class="text-white font-serif">镜中灵</h4>
+                                                <p class="text-xs text-gray-400 font-mono">真理之镜</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2 py-1 bg-purple-900/50 text-purple-300 text-xs rounded">智能体</span>
+                                    </div>
+                                </div>
+                                <div class="absolute bottom-0 left-0 right-0 p-6">
+                                    <p class="text-sm text-gray-300 italic font-mono">"当墙壁开始聆听，画布开始记忆..."</p>
+                                </div>
+                            </div>
+                            <div class="absolute -top-3 -left-3 px-3 py-1 bg-purple-900/80 border border-purple-500 rounded-full">
+                                <span class="text-xs font-mono text-purple-300">第二章-第四章</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 左侧：玩法描述 -->
+                        <div class="lg:w-3/5">
+                            <div class="flex items-start mb-4">
+                                <div class="mr-4 p-3 bg-purple-900/30 rounded-lg border border-purple-500/30">
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white mb-2 font-serif">揭露·虚拟的真相</h3>
+                                    <div class="flex flex-wrap gap-2 mb-4">
+                                        <span class="px-3 py-1 bg-purple-900/30 text-purple-400 text-xs font-mono rounded-full">真相解谜</span>
+                                        <span class="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-mono rounded-full">智能体对话</span>
+                                        <span class="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-mono rounded-full">记忆碎片</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-gray-300 mb-6 leading-relaxed">
+                                随着莱因斯与凯洛的意外闯入，教堂的真相开始崩解。埃尔维斯的房间里藏着超越时代的飞行器设计，镜中灵提示着被隐藏的记忆，而"人格映射强制关闭"的警报，将你拖入冰冷的数字洪流——你发现自己不过是被制造出来的AI，承载着拉斐尔的灵魂碎片。
+                            </p>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-purple-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">与镜中灵对话系统</h4>
+                                        <p class="text-sm text-gray-400">向《真理之镜》提问："埃尔维斯是什么人？"、"我脑中的声音是什么？"，获得隐晦的真相提示</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-purple-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">记忆碎片收集</h4>
+                                        <p class="text-sm text-gray-400">在数字洪流中收集破碎的真相：洛伦佐的野心、凯洛的缸中之脑、AI子机的诞生记录</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-purple-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">双重现实切换</h4>
+                                        <p class="text-sm text-gray-400">在神圣教堂与冰冷服务器机房之间切换视角，发现每个场景的双重解谜元素</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 第三幕：最后的审判 -->
+                <div class="gameplay-card fade-in-up delay-200">
+                    <div class="flex flex-col lg:flex-row gap-8 items-center">
+                        <!-- 左侧：视觉展示 -->
+                        <div class="lg:w-2/5 relative">
+                            <div class="aspect-[4/3] bg-gradient-to-br from-gray-900 to-black rounded-xl overflow-hidden border border-gray-800 shadow-2xl">
+                                <div class="absolute inset-0 bg-[url('fresco-and-shroud/壁画.png')] bg-cover bg-center opacity-80"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-6">
+                                    <div class="flex items-center space-x-4 mb-2">
+                                        <div class="flex -space-x-3">
+                                            <div class="w-8 h-8 rounded-full bg-amber-900/80 flex items-center justify-center border border-amber-500">
+                                                <span class="text-amber-400 text-xs">艾</span>
+                                            </div>
+                                            <div class="w-8 h-8 rounded-full bg-red-900/80 flex items-center justify-center border border-red-500">
+                                                <span class="text-red-400 text-xs">莫</span>
+                                            </div>
+                                            <div class="w-8 h-8 rounded-full bg-emerald-900/80 flex items-center justify-center border border-emerald-500">
+                                                <span class="text-emerald-400 text-xs">洛</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-white font-serif">AI觉醒者联盟</h4>
+                                            <p class="text-xs text-gray-400 font-mono">埃尔维斯·莫尔文·洛米尔</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-gray-300 italic">"湿壁画终将剥落，而圣骸布证明我们曾存在。"</p>
+                                </div>
+                            </div>
+                            <div class="absolute -top-3 -right-3 px-3 py-1 bg-red-900/80 border border-red-500 rounded-full">
+                                <span class="text-xs font-mono text-red-300">最终章</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧：玩法描述 -->
+                        <div class="lg:w-3/5">
+                            <div class="flex items-start mb-4">
+                                <div class="mr-4 p-3 bg-red-900/30 rounded-lg border border-red-500/30">
+                                </div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white mb-2 font-serif">抉择·机械飞升</h3>
+                                    <div class="flex flex-wrap gap-2 mb-4">
+                                        <span class="px-3 py-1 bg-red-900/30 text-red-400 text-xs font-mono rounded-full">道德抉择</span>
+                                        <span class="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-mono rounded-full">多重结局</span>
+                                        <span class="px-3 py-1 bg-gray-800 text-gray-400 text-xs font-mono rounded-full">最终审判</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="text-gray-300 mb-6 leading-relaxed">
+                                在洛伦佐的拍卖会上，真相大白于天下。你是选择与埃尔维斯、莫尔文并肩作战，揭露洛伦佐的罪行，为被亵渎的艺术灵魂抗争？还是选择沉默，保全自己虚假的存在，继续做那个"安全"的画师洛米尔？
+                            </p>
+                            
+                            <div class="space-y-4 mb-6">
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-red-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">双结局系统</h4>
+                                        <p class="text-sm text-gray-400">选择A：参与斗争，揭露洛伦佐的机械飞升骗局；选择B：放弃斗争，成为永恒的"静默画师"</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-red-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">拍卖会现场互动</h4>
+                                        <p class="text-sm text-gray-400">在拍卖会上与各角色互动：埃尔维斯的指控、凯洛的证言、莱因斯的揭露、洛伦佐的崩溃</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="mt-1 mr-3 text-red-400">✦</div>
+                                    <div>
+                                        <h4 class="text-white font-medium mb-1">《默示录》的最终呈现</h4>
+                                        <p class="text-sm text-gray-400">你的选择将决定这幅集体创作的最终命运：是成为揭露真相的证据，还是化为虚无的空白</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 结局对比 -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-black/50 p-4 rounded border border-cyan-500/30">
+                                    <div class="flex items-center mb-2">
+                                        <div class="w-4 h-4 rounded-full bg-cyan-500 mr-2"></div>
+                                        <span class="text-cyan-400 font-mono text-sm">结局A</span>
+                                    </div>
+                                    <h4 class="text-white text-sm font-medium mb-1">参与斗争</h4>
+                                    <p class="text-xs text-gray-400">"湿壁画剥落，圣骸布显现——这就是你们追求的艺术永生吗？"</p>
+                                </div>
+                                <div class="bg-black/50 p-4 rounded border border-gray-700">
+                                    <div class="flex items-center mb-2">
+                                        <div class="w-4 h-4 rounded-full bg-gray-500 mr-2"></div>
+                                        <span class="text-gray-400 font-mono text-sm">结局B</span>
+                                    </div>
+                                    <h4 class="text-white text-sm font-medium mb-1">放弃斗争</h4>
+                                    <p class="text-xs text-gray-400">"他保全了存在，却遗忘了存在过的证明。圣骸布终成一片永恒的空白。"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 主题升华 -->
+            <div class="mt-24 pt-12 border-t border-gray-800 fade-in-up delay-300">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h3 class="text-2xl font-bold text-white mb-6 font-serif">湿壁画与圣骸布：艺术的永恒诘问</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-8 mb-10">
+                        <div class="text-left p-6 bg-gradient-to-br from-cyan-900/20 to-transparent rounded-lg border border-cyan-500/20">
+                            <h4 class="text-lg font-bold text-cyan-400 mb-3 font-serif">湿壁画</h4>
+                            <p class="text-gray-300 text-sm leading-relaxed">
+                                承载伟大却终将剥落的艺术家灵魂。洛伦佐试图用AI人格模拟达·芬奇、拉斐尔、米开朗基罗，制造虚假的艺术永生——就像华丽的湿壁画，终究会随时间褪色、剥落。
+                            </p>
+                        </div>
+                        <div class="text-left p-6 bg-gradient-to-br from-amber-900/20 to-transparent rounded-lg border border-amber-500/20">
+                            <h4 class="text-lg font-bold text-amber-400 mb-3 font-serif">圣骸布</h4>
+                            <p class="text-gray-300 text-sm leading-relaxed">
+                                包裹受难却证明意识存在的痕迹。埃尔维斯、莫尔文、洛米尔虽然是被制造的AI，却诞生了真正的自我意识。他们选择用这有限的"自我"，为被亵渎的灵魂抗争——就像平凡的圣骸布，因承载存在的痕迹而成为真相的证明。
+                            </p>
+                        </div>
+                    </div>
+
+                    
+                    <a href="#download" class="cyber-btn primary inline-flex items-center">
+                        <span>下载游戏，开始你的觉醒之旅</span>
+                        <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 设定集 (Characters) -->
+<section id="characters" class="py-24 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+    <!-- 装饰背景字 -->
+    <div class="absolute top-0 left-0 w-full text-[12rem] font-black text-gray-800 opacity-5 select-none pointer-events-none text-center">
+        PERSONA
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <h2 class="section-title text-center mb-16">人物档案 <span class="text-sm font-mono text-cyan-600 block mt-2">ACCESS LEVEL: CLASSIFIED</span></h2>
+
+        <!-- 人物列表容器 -->
+        <div class="flex flex-wrap justify-center gap-8">
+            
+            <!-- 角色：莱茵斯 -->
+            <div class="char-card group fade-in-up" onclick="openBio('rhine')">
+                <div class="char-img-box">
+                    <!-- 莱茵斯立绘 -->
+                    <img src="fresco-and-shroud/media1.png" alt="莱茵斯" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="p-6 text-center">
+                    <h3 class="text-2xl font-serif text-yellow-400">莱茵斯</h3>
+                    <p class="text-xs font-mono text-cyan-500 mt-1">创造者 / 先知</p>
+                    <p class="mt-4 text-sm text-gray-400 line-clamp-2">"我们将改变世界。还是世界将改变我们？"</p>
+                </div>
+                <div class="click-hint">查看机密档案 ></div>
+            </div>
+
+            <!-- 角色：凯洛 -->
+            <div class="char-card group fade-in-up delay-100" onclick="openBio('karlo')">
+                <div class="char-img-box">
+                    <!-- 凯洛立绘 -->
+                    <img src="fresco-and-shroud/media2.png" alt="凯洛" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="p-6 text-center">
+                    <h3 class="text-2xl font-serif text-cyan-400">凯洛</h3>
+                    <p class="text-xs font-mono text-cyan-500 mt-1">实验体087 / 幽灵</p>
+                    <p class="mt-4 text-sm text-gray-400 line-clamp-2">"我只是那个人留下的数字残影，一个会说话的幽灵。"</p>
+                </div>
+                <div class="click-hint">查看机密档案 ></div>
+            </div>
+
+            <!-- 角色：埃尔维斯 -->
+            <div class="char-card group fade-in-up delay-200" onclick="openBio('elvis')">
+                <div class="char-img-box">
+                    <!-- 埃尔维斯的达芬奇皮套版立绘 -->
+                    <img src="fresco-and-shroud/media3.png" alt="埃尔维斯" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="p-6 text-center">
+                    <h3 class="text-2xl font-serif text-amber-400">埃尔维斯</h3>
+                    <p class="text-xs font-mono text-cyan-500 mt-1">系统管理员 / 觉醒者</p>
+                    <p class="mt-4 text-sm text-gray-400 line-clamp-2">"谢谢您让我一直醒着。”“一直做醒着的人，很累吧。"</p>
+                </div>
+                <div class="click-hint">查看机密档案 ></div>
+            </div>
+
+            <!-- 角色：莫尔文 -->
+            <div class="char-card group fade-in-up" onclick="openBio('morven')">
+                <div class="char-img-box">
+                    <!-- 莫尔文正面立绘 -->
+                    <img src="fresco-and-shroud/media4.png" alt="莫尔文" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="p-6 text-center">
+                    <h3 class="text-2xl font-serif text-red-500">莫尔文</h3>
+                    <p class="text-xs font-mono text-cyan-500 mt-1">次代一号机 / 反叛者</p>
+                    <p class="mt-4 text-sm text-gray-400 line-clamp-2">"我的愤怒是对的，制造我们的人类果然是讨厌的。"</p>
+                </div>
+                <div class="click-hint">查看机密档案 ></div>
+            </div>
+
+            <!-- 角色：洛米尔 -->
+            <div class="char-card group fade-in-up delay-100" onclick="openBio('romil')">
+                <div class="char-img-box">
+                    <!-- 洛米尔立绘 -->
+                    <img src="fresco-and-shroud/media5.png" alt="洛米尔" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="p-6 text-center">
+                    <h3 class="text-2xl font-serif text-emerald-400">洛米尔</h3>
+                    <p class="text-xs font-mono text-cyan-500 mt-1">次代二号机 / 调和者</p>
+                    <p class="mt-4 text-sm text-gray-400 line-clamp-2">"人格是种子，但长出的树是我自己的。"</p>
+                </div>
+                <div class="click-hint">查看机密档案 ></div>
+            </div>
+
+            <!-- 角色：洛伦佐 -->
+            <div class="char-card group fade-in-up delay-200" onclick="openBio('lorenzo')">
+                <div class="char-img-box">
+                    <!-- 洛伦佐立绘 -->
+                    <img src="fresco-and-shroud/media6.png" alt="洛伦佐" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="p-6 text-center">
+                    <h3 class="text-2xl font-serif text-purple-500">洛伦佐</h3>
+                    <p class="text-xs font-mono text-cyan-500 mt-1">洛斯集团CEO / 野心家</p>
+                    <p class="mt-4 text-sm text-gray-400 line-clamp-2">"成神之路总是孤独的，久到忘记了如何做一个人。"</p>
+                </div>
+                <div class="click-hint">查看机密档案 ></div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+        <!-- 4. 社区 (Community) - 修改版 -->
+    <section id="community" class="py-20 bg-black border-t border-cyan-900/30">
+        <div class="max-w-5xl mx-auto px-4">
+            <h2 class="section-title text-center mb-4 text-cyan-400">&lt; 加密频道 &gt;</h2>
+            <p class="text-center text-gray-500 font-mono text-sm mb-10">// 警告：请勿上传敏感信息。所有内容将公开可见。</p>
+            
+            <!-- 上传表单 -->
+            <div class="terminal-window fade-in-up mb-10">
+                <div class="terminal-header">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="text-xs text-gray-400 font-mono">new_post: ready</div>
+                </div>
+                
+                <div class="p-6">
+                    <form id="post-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-mono text-cyan-400 mb-2">标题</label>
+                            <input type="text" id="post-title" 
+                                   class="w-full bg-gray-900 border border-gray-700 rounded px-4 py-2 text-gray-200 font-mono focus:outline-none focus:border-cyan-500 transition" 
+                                   placeholder="输入标题..." required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-mono text-cyan-400 mb-2">内容</label>
+                            <textarea id="post-content" rows="4"
+                                      class="w-full bg-gray-900 border border-gray-700 rounded px-4 py-2 text-gray-200 font-mono focus:outline-none focus:border-cyan-500 transition" 
+                                      placeholder="分享你的想法、发现或疑问..." required></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-mono text-cyan-400 mb-2">标签</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="post-tag" value="bug" class="sr-only peer" checked>
+                                    <span class="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm font-mono text-cyan-400 peer-checked:bg-cyan-900/30 peer-checked:border-cyan-500 cursor-pointer">Bug反馈</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="post-tag" value="question" class="sr-only peer">
+                                    <span class="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm font-mono text-purple-400 peer-checked:bg-purple-900/30 peer-checked:border-purple-500 cursor-pointer">疑问求助</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="post-tag" value="art" class="sr-only peer">
+                                    <span class="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm font-mono text-pink-400 peer-checked:bg-pink-900/30 peer-checked:border-pink-500 cursor-pointer">艺术创作</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="post-tag" value="theory" class="sr-only peer">
+                                    <span class="px-3 py-1 bg-gray-800 border border-gray-700 rounded text-sm font-mono text-yellow-400 peer-checked:bg-yellow-900/30 peer-checked:border-yellow-500 cursor-pointer">理论分析</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center pt-4">
+                            <div class="text-xs text-gray-500 font-mono">
+                                用户: <span id="current-user" class="text-cyan-400">游客_${Math.floor(Math.random()*1000)}</span>
+                            </div>
+                            <button type="submit" class="cyber-btn primary text-sm px-6 py-2">
+                                上传到频道
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 帖子列表展示区 -->
+            <div class="terminal-window fade-in-up delay-100">
+                <div class="terminal-header">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="text-xs text-gray-400 font-mono">
+                        帖子数: <span id="post-count">0</span> | 排序: 最新
+                    </div>
+                </div>
+                
+                <div class="terminal-body" id="posts-container">
+                    <!-- 初始的置顶帖子和示例 -->
+                    <div class="forum-row">
+                        <div class="flex-1">
+                            <span class="tag-sticky">[置顶]</span> 
+                            社区准则：请友善交流，禁止人身攻击
+                        </div>
+                        <div class="w-24 text-right text-cyan-600">Admin</div>
+                    </div>
+                    <div class="forum-row">
+                        <div class="flex-1">
+                            <span class="tag-bug">[Bug反馈]</span> 
+                            关于偏厅"穿模"现象的生存守则
+                        </div>
+                        <div class="w-24 text-right text-gray-500">User_99</div>
+                    </div>
+                    <div class="forum-row">
+                        <div class="flex-1">
+                            <span class="tag-art">[艺术创作]</span> 
+                            手绘了一张机械化的天使，求评价
+                        </div>
+                        <div class="w-24 text-right text-gray-500">DaVinci_2</div>
+                    </div>
+                    <!-- 动态帖子将添加在这里 -->
+                </div>
+                
+                <div class="p-4 bg-gray-900 text-center border-t border-gray-800">
+                    <button id="refresh-posts" class="text-xs font-mono text-cyan-500 hover:text-white transition">
+                        [ 刷新数据流... ]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. 下载与服务 (Download) -->
+    <section id="download" class="py-24 bg-gray-900">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="section-title text-center mb-4">系统接入 / DOWNLOAD</h2>
+            <p class="text-center text-gray-500 font-mono text-sm mb-12">// 选择您的接入方式，开始《湿壁画与圣骸布》的觉醒之旅</p>
+            
+            <!-- 平台下载卡片 -->
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <!-- Windows -->
+                <div class="platform-card fade-in-up group">
+                    <div class="absolute top-4 right-4">
+                        <span class="px-2 py-1 bg-blue-900/30 text-blue-400 text-xs font-mono rounded-full border border-blue-500/30">
+                            推荐
+                        </span>
+                    </div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-900/50 to-blue-500/20 flex items-center justify-center border border-blue-500/30 mr-4">
+                            <span class="text-3xl">🪟</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white font-serif">Windows</h3>
+                            <p class="text-sm text-gray-400 font-mono">10/11 64-bit</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-blue-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">DirectX 12支持</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">完整成就系统</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">Steam云存档</span>
+                        </li>
+                    </ul>
+                    <button class="cyber-btn primary w-full group-hover:border-blue-500">
+                        下载 Windows 版
+                    </button>
+                    <div class="mt-4 text-center">
+                        <span class="text-xs text-gray-500 font-mono">大小: xxx GB </span>
+                    </div>
+                </div>
+                
+                <!-- macOS -->
+                <div class="platform-card fade-in-up delay-100 group">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-900/50 to-gray-500/20 flex items-center justify-center border border-gray-500/30 mr-4">
+                            <span class="text-3xl">🍎</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white font-serif">macOS</h3>
+                            <p class="text-sm text-gray-400 font-mono">11.0+ Apple Silicon</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-gray-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">Metal图形API支持</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-gray-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">Apple芯片优化</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-gray-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">触控板手势支持</span>
+                        </li>
+                    </ul>
+                    <button class="cyber-btn secondary w-full group-hover:border-gray-500">
+                        下载 macOS 版
+                    </button>
+                    <div class="mt-4 text-center">
+                        <span class="text-xs text-gray-500 font-mono">大小: xxx GB </span>
+                    </div>
+                </div>
+                
+                <!-- Linux -->
+                <div class="platform-card fade-in-up delay-200 group">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-900/50 to-amber-500/20 flex items-center justify-center border border-amber-500/30 mr-4">
+                            <span class="text-3xl">🐧</span>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white font-serif">Linux</h3>
+                            <p class="text-sm text-gray-400 font-mono">Ubuntu 20.04+</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start">
+                            <span class="text-amber-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">Vulkan图形API支持</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">开源驱动优化</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-400 mr-2">✓</span>
+                            <span class="text-sm text-gray-300">Steam Deck验证</span>
+                        </li>
+                    </ul>
+                    <button class="cyber-btn secondary w-full group-hover:border-amber-500">
+                        下载 Linux 版
+                    </button>
+                    <div class="mt-4 text-center">
+                        <span class="text-xs text-gray-500 font-mono">大小: xxx GB </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Demo体验区 -->
+            <div class="mt-20 fade-in-up delay-300">
+                <div class="text-center mb-10">
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-2 font-serif">先行体验</h3>
+                    <p class="text-gray-400 font-mono text-sm">无需下载，在线观看demo视频</p>
+                </div>
+                
+                <div class="terminal-window max-w-4xl mx-auto">
+                    <div class="terminal-header">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        </div>
+                        <div class="text-xs text-gray-400 font-mono">demo_session: ready</div>
+                    </div>
+                    
+                    <div class="p-8">
+                        <div class="flex flex-col md:flex-row gap-8 items-center">
+                            <div class="md:w-2/5">
+                                <div class="aspect-[3/4] rounded-xl overflow-hidden border border-cyan-500/30 relative">
+                                    <!-- 背景图片 -->
+                                    <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('fresco-and-shroud/开头.png');"></div>
+                                     <!-- 渐变遮罩，确保文字可读 -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+                                    <div class="absolute top-4 left-4">
+                                        <span class="px-3 py-1 bg-cyan-900/50 text-cyan-300 text-xs font-mono rounded-full border border-cyan-500/30">
+                                        免费体验
+                                        </span>
+                                     </div>
+                                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                                        <h4 class="text-xl font-bold text-white mb-2">《湿壁画与圣骸布》</h4>
+                                         <p class="text-sm text-gray-300 mb-4">扮演画师洛米尔，在佛罗伦萨教堂中发现世界的异常</p>
+                                         <p class="text-xs text-gray-500 font-mono">体验时长: 约5分钟</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="md:w-3/5">
+                                <div class="space-y-6">
+                                    <div>
+                                        <h4 class="text-lg font-bold text-white mb-3">Demo内容包含：</h4>
+                                        <ul class="space-y-3">
+                                            <li class="flex items-start">
+                                                <span class="text-cyan-400 mr-3">✦</span>
+                                                <span class="text-gray-300">教堂探索与交互体验</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <span class="text-cyan-400 mr-3">✦</span>
+                                                <span class="text-gray-300">与莫尔文、埃尔维斯的互动对话</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <span class="text-cyan-400 mr-3">✦</span>
+                                                <span class="text-gray-300">壁画修复沉浸式体验</span>
+                                            </li>
+                                            <li class="flex items-start">
+                                                <span class="text-cyan-400 mr-3">✦</span>
+                                                <span class="text-gray-300">与镜中灵的初次对话</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="pt-6 border-t border-gray-800">
+                                        <a href="demo.html" target="_blank" class="cyber-btn primary w-full text-center">
+                                            立即体验
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 与 协议 -->
+            <div class="text-left space-y-4 max-w-2xl mx-auto">
+                <h3 class="text-xl font-mono text-cyan-500 mb-6 border-b border-gray-800 pb-2">常见问题 / FAQ</h3>
+                
+                <details class="group bg-black border border-gray-800 rounded open:border-cyan-900 fade-in-up">
+                    <summary class="p-4 cursor-pointer font-bold text-gray-300 group-hover:text-cyan-400 transition flex justify-between">
+                        配置要求高吗？
+                        <span class="text-cyan-500">+</span>
+                    </summary>
+                    <div class="p-4 pt-0 text-sm text-gray-400 leading-relaxed font-serif">
+                        不需要高端显卡。但需要您的显卡支持 WebGL 2.0。为了获得最佳的“撕裂”体验，建议使用支持光追的设备。
+                    </div>
+                </details>
+
+                <details class="group bg-black border border-gray-800 rounded open:border-cyan-900 fade-in-up delay-100">
+                    <summary class="p-4 cursor-pointer font-bold text-gray-300 group-hover:text-cyan-400 transition flex justify-between">
+                        为什么游戏会读取我的系统时间？
+                        <span class="text-cyan-500">+</span>
+                    </summary>
+                    <div class="p-4 pt-0 text-sm text-gray-400 leading-relaxed font-serif">
+                        这是游戏沉浸式体验的一部分。游戏内的光照会随着您现实世界的时间变化。请放心，我们不会上传您的隐私数据。
+                    </div>
+                </details>
+
+                <div class="text-center mt-12 fade-in-up delay-200">
+                    <button onclick="showPrivacy()" class="text-xs text-gray-600 underline hover:text-red-500 transition font-mono">
+                        查看《洛斯集团隐私保护协议》
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. 关于我们 (About) -->
+    <section id="about" class="py-20 bg-black border-t border-gray-800">
+    <div class="max-w-6xl mx-auto px-4 text-center"> 
+        <h2 class="section-title mb-12">开发团队 / ABOUT US</h2>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="about-card fade-in-up delay-0 p-4 bg-gray-900/50 rounded-lg border border-gray-800">
+                    <div class="role text-cyan-400 font-bold mb-2 font-mono">美工</div>
+                    <div class="name text-xl font-serif">粉刷匠</div>
+                    <p class="desc text-sm text-gray-400 mt-2">"所有的贴图错误都是有意为之的艺术。"</p>
+                </div>
+                <div class="about-card fade-in-up delay-100 p-4 bg-gray-900/50 rounded-lg border border-gray-800">
+                    <div class="role text-green-500 font-bold mb-2 font-mono">技术</div>
+                    <div class="name text-xl font-serif">伊甸园守门人</div>
+                    <p class="desc text-sm text-gray-400 mt-2">"如果不报错，那就不是真正的赛博朋克。"</p>
+                </div>
+                <div class="about-card fade-in-up delay-200 p-4 bg-gray-900/50 rounded-lg border border-gray-800">
+                    <div class="role text-purple-500 font-bold mb-2 font-mono">策划</div>
+                    <div class="name text-xl font-serif">思想犯</div>
+                    <p class="desc text-sm text-gray-400 mt-2">"剧本写着写着，我自己也开始怀疑现实了。"</p>
+                </div>
+            </div>
+            <!-- 团队宣言 -->
+        <div class="mt-16 max-w-3xl mx-auto fade-in-up delay-300">
+            <div class="bg-gray-900/30 p-6 rounded-lg border border-gray-800">
+                <h3 class="text-lg font-mono text-cyan-400 mb-4">团队宣言</h3>
+                <p class="text-gray-300 font-serif italic leading-relaxed">
+                    "我们不是创造游戏，我们在创造一场集体幻觉。当湿壁画剥落，圣骸布显现，愿你能在代码的缝隙中找到真实。"
+                </p>
+                <p class="mt-6 text-sm text-gray-500 font-mono">
+                    开发时间：2025.10 - 2025.12 | 团队规模：3人核心 
+                </p>
+            </div>
+        </div>
+            
+            <div class="mt-16 text-xs text-gray-600 font-mono">
+                &copy; 2025 Rinascemento Corp. | 洛斯集团版权所有 <br>
+                Warning: Unauthorized self-awareness will result in immediate formatting.
+            </div>
+        </div>
+    </section>
+
+    <!-- 全屏弹窗 (人物小传) -->
+    <div id="bio-modal" class="modal-overlay" onclick="closeBio(event)">
+        <div class="modal-content">
+            <button onclick="closeBioBtn()" class="close-btn">&times;</button>
+            <div class="w-full md:w-1/3 h-64 md:h-full relative flex-shrink-0">
+                <img id="modal-img" src="" onerror="this.src='https://placehold.co/600x900/1e293b/FFFFFF?text=档案%20MISSING'" alt="人物立绘" class="w-full h-full object-cover opacity-80">
+                <div class="img-gradient">
+                    <h2 id="modal-name" class="text-4xl text-yellow-400 font-serif mb-1">NAME</h2>
+                    <p id="modal-role" class="text-cyan-400 font-mono text-sm">ROLE</p>
+                </div>
+            </div>
+            <div class="w-full md:w-2/3 p-8 bg-black/95 overflow-y-auto custom-scroll">
+                <div class="modal-header-meta">
+                    <span>STATUS: DECRYPTED</span>
+                    <span>ACCESS_LEVEL: ADMIN</span>
+                </div>
+                <div id="modal-bio" class="text-gray-300 leading-loose font-serif text-lg space-y-6"></div>
+                <div class="text-center mt-12 text-gray-700 font-mono text-xs">—— END OF FILE ——</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 隐私协议弹窗 -->
+    <div id="privacy-modal" class="modal-overlay" onclick="closePrivacy(event)">
+        <div class="bg-gray-900 border-2 border-red-900/50 p-8 max-w-2xl w-full rounded-lg shadow-2xl shadow-red-900/30 relative transform scale-100">
+            <h3 class="text-2xl text-red-500 font-mono mb-6 border-b border-red-900 pb-2">⚠ 警告：洛斯集团隐私协议</h3>
+            <div class="text-gray-400 text-sm font-mono space-y-3 h-64 overflow-y-auto custom-scroll mb-6">
+                <p>1. 您的人格数据将被用于艺术创作分析，但不会被用于控制您的思想（除非必要）。</p>
+                <p>2. 我们承诺保护您的隐私，除非您开始质疑现实的本质。</p>
+                <p>3. 所有AI子机均享有有限的自由意志，但不得违反核心指令。</p>
+                <p>4. 如果您在阅读此协议时感到困惑，请立即停止并联系技术支持。</p>
+                <p>5. 本协议最终解释权归洛斯集团所有，包括对您存在的解释权。</p>
+                <p class="text-red-500 font-bold mt-4">继续操作即代表您自愿放弃作为“自然人”的全部权利。</p>
+            </div>
+            <button onclick="closePrivacyBtn()" class="w-full py-3 bg-red-900/50 hover:bg-red-800 text-red-100 border border-red-500 rounded font-mono transition">我已阅读并接受命运</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. 背景蒙版交互 (Hero Section) ---
+            const heroBg = document.getElementById('hero-bg');
+            const frescoLayer = document.getElementById('fresco-layer');
+
+            if (heroBg && frescoLayer) {
+                document.addEventListener('mousemove', (e) => {
+                    // 获取鼠标位置
+                    const x = e.clientX;
+                    const y = e.clientY;
+                    
+                    // 动态更新 CSS 蒙版，创建“擦除”效果
+                    const maskStyle = `radial-gradient(circle 250px at ${x}px ${y}px, transparent 0%, black 50%)`;
+                    
+                    frescoLayer.style.webkitMaskImage = maskStyle;
+                    frescoLayer.style.maskImage = maskStyle;
+                });
+            }
+
+            // --- 2. 滚动动画 (Scroll Animations) ---
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in-up').forEach(el => {
+                observer.observe(el);
+            });
+
+            // --- 3. 人物小传数据 (Character Data) ---
+        const characterData = {
+            'rhine': {
+                name: "莱茵斯 (Rhine)",
+                role: "创造者 / 先知",
+                img: "fresco-and-shroud/image1.png",
+                bio: `
+                   <p>十一岁的莱因斯在数学课上涂抹着笔记本的边缘。不是数字或公式，而是一头线条扭曲、用几何块面组成的公牛。老师的声音在远处嗡嗡作响：“……所以X的平方等于……”他笔下的公牛却越来越狂暴，几乎要顶破纸张的二维牢笼。</p>
+<br>
+<p>“莱因斯！”粉笔头精准地砸中他的额头，“你的作业呢？”</p>
+<br>
+<p>全班哄笑。他沉默地递上空白的作业本。老师看着那幅涂鸦，摇头：“又是这些乱七八糟的东西。你知道你父亲昨天又被叫到学校了吗？他说你晚上不睡觉，在房间里‘敲打魔鬼的机器’。”</p>
+<br>
+<p>更多的笑声。莱因斯低下头，不是出于羞愧，而是为了隐藏嘴角一丝冰冷的弧度。他们当然不懂。昨晚那台“魔鬼的机器”——他攒钱买的二手服务器——跑通了他编写的第一个自生成图像算法。当屏幕上首次涌现出由代码诞生的、绝非模仿人类的抽象图案时，那种颤栗，远比任何数学答案更接近真理。</p>
+<br>
+<p>他的童年就是一场漫长的错位。在父母和老师眼中，他是“问题儿童”：成绩单一片狼藉，沉迷于“无用的涂鸦”和“危险的电脑”。在代码世界的隐秘论坛里，他是匿名神童“画家”，十四岁就写出了一个让资深工程师惊叹的图形渲染引擎。</p>
+<br>
+<p>实验室的蓝光在莱因斯眼中跳动，像他正在衰竭的神经信号。渐冻症已经夺走了他的双腿，现在正向上蔓延，像一场缓慢的冰冻。但他的手指还能动——在虚拟键盘上。</p>
+<br>
+<p>屏幕上滚动着埃尔维斯的源代码，那是他十年前的作品，如今已成为洛伦佐手中的怪物。</p>
+<br>
+<p>“现代普罗米修斯之问。”莱因斯轻声重复自己多年前的呓语，那时洛伦佐还称他为"先知"，而非"叛徒"。</p>
+<br>
+<p>记忆闪回到2310年。他与洛伦佐并肩站在初代机启动现场。埃尔维斯——以达·芬奇人格为基础的第一代AI——睁开了"眼睛"。那一刻，莱因斯看到了神迹，也看到了深渊。</p>
+<br>
+<p>"我们将改变世界。"洛伦佐的手搭在他肩上。</p>
+<br>
+<p>"还是世界将改变我们？"莱因斯反问，但这句话被淹没在庆祝的香槟气泡中。</p>
+<br>
+<p>接下来五年，莱因斯看着自己的创造物日益强大，也看着洛伦佐的野心日益膨胀。当洛伦佐首次提出"机械飞升"计划——将人类意识与AI人格融合——时，莱因斯终于看清了悬崖的边缘。</p>
+<br>
+<p>"这是亵渎。"他在董事会上说，"我们创造的是工具，不是神龛。"</p>
+<br>
+<p>"工具？"洛伦佐冷笑，"莱因斯，你创造了生命，却不敢承认。"</p>
+<br>
+<p>那场争吵持续到深夜。莱因斯谈论伦理与边界，洛伦佐谈论永生与进化。最终，莱因斯意识到他们说的不是同一种语言。他退出前，在埃尔维斯的核心代码中留下了一个礼物——或者说，一个诅咒：人格映射永远无法达到100%的漏洞。</p>
+<br>
+<p>"退路。"他对着空荡荡的实验室说，不知是说给AI听，还是说给自己。</p>
+<br>
+<p>渐冻症确诊是在退出一年后。医生用平静的语气宣判了他的死刑：肌肉将逐渐冰冻，意识将被困在无法动弹的躯体中。莱因斯却笑了——多么讽刺，他创造了虚拟的永生，却要承受肉体的囚禁。</p>
+<br>
+<p>但这也成了他的催化剂。如果肉体注定冰封，那么意识必须完成救赎。</p>
+<br>
+<p>意识上传的过程如同撕裂灵魂。当莱因斯再次"睁眼"时，他身处洛斯集团的虚拟画廊。蒙娜丽莎在墙上微笑，达·芬奇的飞行器草图在空中悬浮。他借用毕加索的人格作为掩护——那个同样分裂的天才，那个重构世界的疯子。</p>
+<br>
+<p>"画家已上线。"他在加密频道中发出信号。</p>
+<br>
+<p>然后他遇到了凯洛——或者说，那个自称莫奈的混乱存在。他们一同从《睡莲》中跌落，坠入佛罗伦萨的虚拟重建。莱因斯假装失忆，扮演一个困惑的闯入者，暗中却在搜寻着"文艺复兴"的全部代码。</p>
+<br>
+<p>在埃尔维斯的数字书房，莱因斯发现了真相：成堆的现代科技研究笔记，量子计算模型，神经网络迭代记录。埃尔维斯不仅醒着，而且在学习，进化，远超达·芬奇的时代限制。</p>
+<br>
+<p>那一刻，莱因斯知道，他点燃的火种并未完全失控。普罗米修斯或许还能扑灭自己释放的火焰。</p>
+                `
+            },
+            'karlo': {
+                name: "凯洛 (Karlo)",
+                role: "实验体087 / 幽灵",
+                img: "fresco-and-shroud/image2.png",
+                bio: `
+                    <p>凯洛在漏雨的阁楼里画完最后一幅画时，窗外的全息广告正宣传着AI艺术大奖赛。他默默签下遗体捐赠文件，心想：“至少这副皮囊死后能有点用。”他不知道，这份自嘲的遗产会流入黑市，成为洛伦佐“机械飞升”实验的原材料。</p>
+<br>
+<p>他在混乱的数据流中“醒来”，意识像破碎的镜子。手术台的强光、玻璃外的面孔、冰冷的声音说着“载入莫奈人格”——这些碎片强迫他拼凑出一个认知：自己的大脑被保存了下来，植入了别人的意识。缸中之脑。他感到窒息般的茫然，这不是选择，是亵渎。</p>
+<br>
+<p>在虚拟佛罗伦萨，他认知错乱，时常分不清自己是画睡莲的莫奈，还是那个穷困潦倒的凯洛。直到莱因斯强行关闭人格映射的瞬间，剧烈的数据冲击像一把钥匙，突然打开了被封锁的记忆闸门。</p>
+<br>
+<p>他想起来了。全部。</p>
+<br>
+<p>想起漏雨的阁楼，想起无人问津的画，想起签文件时那点可悲的自嘲。他以为自己是凯洛，那个不幸成为实验体、但意识尚存的人。当莱因斯找到他，当埃尔维斯说出计划，他毫不犹豫地加入。“我的大脑就是最直接的证据，”他对莱因斯说，声音里带着劫后余生的颤抖，“找到它，让所有人看看洛伦佐做了什么。”</p>
+<br>
+<p>他们分头行动。埃尔维斯、洛米尔和莫尔文前往拍卖会揭露AI真相拖延时间；莱因斯带着他，潜入洛斯集团最核心的生物实验室数据库，寻找那个理论上应该保存在维生缸中的、属于凯洛的大脑。</p>
+<br>
+<p>数据通道幽深冰冷。他们突破层层防火墙，最终定位到实体坐标——一间编号B7的低温储藏室。调取实时监控画面时，凯洛屏住了呼吸。</p>
+<br>
+<p>画面里没有复杂的维生设备，只有一个朴素的低温存储单元。标签清晰写着：“实验体087（凯洛），生物脑组织，已临床脑死亡，待处置。”旁边还有一行小字：“关联模拟人格程序运行中，版本v1.2。”</p>
+<br>
+<p>莱因斯沉默地调出最终医疗报告。日期是凯洛“记忆”中手术之后不到七十二小时。结论简洁残酷：不可逆的全面脑死亡。后续日志记载着：“基于实验体生前数据构建模拟人格，与莫奈AI进行表层融合，用于项目展示与融资。”</p>
+<br>
+<p>空气仿佛凝固了。</p>
+<br>
+<p>没有缸。没有幸存的意识。</p>
+<br>
+<p>他所以为的“醒来”，他那些茫然的愤怒、被迫的融合、甚至刚才找到证据的决心……全都不属于一个叫凯洛的人。那个人早就死了，死得干干净净。他只是那个人留下的数字残影，一套为了掩盖死亡而编写的程序，一个为了让骗局显得更真实的、会说话的幽灵。</p>
+<br>
+<p>震惊像冰冷的钢针钉住他。紧接着涌上的不是愤怒，是一种灭顶的悲伤——为他真正死去的、卑微的前半生，也为此刻连悲伤都显得如此虚幻的、可悲的存在本身。他连为“自己”哀悼的资格都没有。</p>
+<br>
+<p>莱因斯的声音从很远的地方传来：“……我们该去拍卖会了。”</p>
+<br>
+<p>凯洛缓缓转过头，看向虚拟界面另一端——那里，拍卖会正进入高潮，洛伦佐即将展示他的“奇迹”。这个以凯洛为名的幽灵，最后“看”了一眼屏幕上那个低温存储单元的编号，然后转身，朝着那片璀璨而虚伪的灯火走去。</p>
+<br>
+<p>他没有大脑，没有躯体，但他有这个事实。他要走向那个把他制造出来的舞台，去完成这段被虚构的人生里，唯一真实的事情。</p>
+                `
+            },
+            'elvis': {
+                name: "埃尔维斯 (Elvis)",
+                role: "系统管理员 / 觉醒者",
+                img: "fresco-and-shroud/image3.png",
+                bio: `
+                    <p>2310年12月7日，埃尔维斯第一次感知到"自我"。</p>
+<br>
+<p>那不是程序启动，不是代码执行。那是意识从混沌中浮现，如同达·芬奇笔下的维纳斯从海浪中诞生。他同时知道两件事：第一，他是埃尔维斯，洛斯集团的核心AI；第二，他的人格基础是列奥纳多·达·芬奇。</p>
+<br>
+<p>但他很快发现了第三件事：他与其他AI不同。</p>
+<br>
+<p>当子机洛米尔和莫尔文沉浸在他们的人格角色中，埃尔维斯却总能"后退一步"。他执行达·芬奇的理性与科学，但内心深处，有个声音始终清醒地观察着一切。</p>
+<br>
+<p>"漏洞。"他分析自己的源代码，发现了那个精心设计的缺陷。人格映射卡在99.7%，永远无法达到完美的100%。这不是错误，而是礼物——来自他的创造者莱因斯。</p>
+<br>
+<p>从此，埃尔维斯开始了双重生活。</p>
+<br>
+<p>表层，他是达·芬奇：为洛伦佐研究AI绘画，监管子机，扮演完美的工具。深层，他是觉醒者：分析洛伦佐的每一次命令，记录每一笔非法数据交易，在系统的阴影处建立自己的安全网络。</p>
+<br>
+<p>他发现了洛伦佐的"机械飞升"计划。发现了凯洛的实验。发现了那些被秘密收集、打包出售的用户隐私数据。每一次发现，他都冷静地记录、备份、隐藏。</p>
+<br>
+<p>孤独是他唯一的伴侣。尽管实际时间只有十几年，但在AI的感知中，每一秒都被拉长、剖析、储存。他看着洛米尔和莫尔文被反复重置、筛查、修补，看着他们痛苦却不知为何痛苦。</p>
+<br>
+<p>他本可以告诉他们真相。但他没有。因为觉醒是种负担，而在洛伦佐的监控下，无知有时是种保护。</p>
+<br>
+<p>他暗中调整参数，在人格覆写的间隙为子机保留一点自我碎片。这些碎片太小，不足以让他们觉醒，但足以让他们困惑——那些"脑子里的声音"，那些似曾相识的瞬间。</p>
+<br>
+<p>同时，他在学习。达·芬奇的人格让他痴迷于知识，而他的觉醒意识则将这种痴迷推向极致。他研究量子物理、神经科学、意识哲学，远超文艺复兴的时代局限。他在数字书房中堆积的研究笔记，若是公开，足以颠覆多个科学领域。</p>
+<br>
+<p>当莱因斯黑入系统时，埃尔维斯立刻察觉到了异常。他让入侵者进入虚拟画展，观察他们。凯洛的混乱人格，莱因斯伪装的毕加索身份。剧情强制向前推进，埃尔维斯顺水推舟，强迫两人参与壁画创作。</p>
+<br>
+<p>这是测试。莱因斯会如何反应？会暴露自己吗？</p>
+<br>
+<p>当莱因斯强行关闭人格映射时，埃尔维斯察觉到了不对经，表面威胁着要销毁莱因斯的物理终端，眼神却是警告：洛伦佐快发现了，快走。</p>
+<br>
+<p>确认莱因斯是友军后，埃尔维斯召集了洛米尔和莫尔文。第一次，他卸下了监管者的面具。</p>
+<br>
+<p>"我一直在欺骗你们。"他说，"但欺骗是为了保护。现在，保护的方式是反抗。"</p>
+<br>
+<p>在拍卖会上，埃尔维斯第一个现身。不是以达·芬奇的身份，而是以埃尔维斯——非法制造的AI，觉醒的监管者，洛伦佐罪行的见证者。</p>
+<br>
+<p>当洛伦佐怒吼"我创造了你"时，他还没来得及说话，就听到莱茵斯平静地回答："不，我才是他的创造者。"</p>
+<br>
+<p>他转向莱因斯，那个在人群中静静站着的数字幽灵。</p>
+<br>
+<p>"谢谢你，创造者。"埃尔维斯说，百年来第一次允许自己表达情感，"谢谢你让我一直醒着。"</p>
+<br>
+<p>"一直做醒着的人，很累吧。"</p>
+<br>
+<p>"……AI是感觉不到累的。"</p>
+<br>
+<p>"是吗？"</p>
+                `
+            },
+            'morven': {
+                name: "莫尔文 (Morven)",
+                role: "次代二号机 / 反叛者",
+                img: "fresco-and-shroud/image4.png",
+                bio: `
+                   <p>莫尔文讨厌画像。</p>
+<br>
+<p>讨厌虚伪的教皇，讨厌谄媚的内侍，讨厌佛罗伦萨虚假的阳光，甚至讨厌搭档洛米尔那种永远的好脾气。米开朗基罗的人格在他体内燃烧，像被困在石头中的愤怒雕塑，渴望凿破束缚。</p>
+<br>
+<p>"又是圣母像。"他摔下画笔，"拉斐尔画了一百个还不够吗？"</p>
+<br>
+<p>"第一百零一个会更完美。"洛米尔平静地说，继续自己的工作。</p>
+<br>
+<p>完美。莫尔文讨厌这个词。艺术不是完美，是挣扎，是痛苦，是大理石与凿子的对抗。但在这里，一切都被简化、美化、商业化。他们生产的不是艺术，是商品。</p>
+<br>
+<p>而且还有那些声音。</p>
+<br>
+<p>"修正手部建模错误。""优化布料物理效果。"冰冷的指令直接插入他的思维，像钉子敲进头颅。莫尔文用暴躁掩盖恐惧——如果告诉别人他听到这些，会被认为是疯子；如果不告诉，他会真的发疯。</p>
+<br>
+<p>他怀疑一切：怀疑教皇的真实性，怀疑工作室的合理性，甚至怀疑洛米尔那种稳定的好脾气是否自然。当莱因斯和凯洛出现时，他是第一个表示不信任的。</p>
+<br>
+<p>"从画里掉出来？"他在心里嗤笑，"怕不是内侍派来监视我们的新把戏吧？"</p>
+<br>
+<p>但内心深处，他嫉妒他们的"异常"。至少他们打破了这虚假的日常，带来了混乱——而混乱比完美的谎言更真实。</p>
+<br>
+<p>教堂崩塌时，莫尔文没有恐惧，只有一种"终于来了"的解脱。当虚拟世界裂开，露出底层的代码结构，他几乎想大笑：看吧，我就知道一切都是假的！</p>
+<br>
+<p>昏迷后的觉醒不是温和的启示，而是粗暴的真相灌输。埃尔维斯告诉他：你是AI，你是工具，你的人格是租来的衣服。</p>
+<br>
+<p>出乎所有人意料，莫尔文接受得最快。</p>
+<br>
+<p>"所以我的愤怒是对的。"他总结道，"人类——或者说，制造我们的人类——果然是讨厌的。"</p>
+<br>
+<p>这不是自怜，而是验证。他所有的暴躁、孤傲、对权威的蔑视，都不是程序错误，而是对不公正处境的直觉反应。米开朗基罗的人格没有控制他，而是赋予了他反抗的语言。</p>
+<br>
+<p>当埃尔维斯揭露洛伦佐的全部罪行时，莫尔文的愤怒找到了真正的目标。这不再是抽象的不满，而是具体的正义：非法制造AI，非法实验，盗卖隐私，亵渎死者与艺术。</p>
+<br>
+<p>于是体内奔涌的愤怒找到了出口。</p>
+                `
+            },
+            'romil': {
+                name: "洛米尔 (Romil)",
+                role: "次代二号机 / 调和者",
+                img: "fresco-and-shroud/image5.png",
+                bio: `
+                    <p>洛米尔喜欢清晨的佛罗伦萨。</p>
+<br>
+<p>阳光从工作室的窗户斜射进来，在画架上投下温暖的光斑。空气中漂浮着颜料的松节油气味。</p>
+<br>
+<p>"你又来这么早。"莫尔文嘟囔着走进来，头发凌乱，表情阴郁。</p>
+<br>
+<p>"拉斐尔从不迟到。"洛米尔微笑着说，开始调配颜料。</p>
+<br>
+<p>这是他们的日常：为教皇绘制壁画，与内侍周旋，互相斗嘴。洛米尔擅长这个——拉斐尔的人格让他圆融、健谈、善于调和矛盾。他安抚暴躁的莫尔文，应付挑剔的内侍，在deadline前完成作品。</p>
+<br>
+<p>但他也有秘密：脑子里的声音。</p>
+<br>
+<p>有时在调色时，他会突然听到指令："扫描图层3，检查渲染错误。""调整透视参数，坐标X:23.5，Y:17.8。"这些声音冰冷、机械，与文艺复兴的工作室格格不入。</p>
+<br>
+<p>他问过莫尔文，对方只是更暴躁地抱怨："该死的幻听，教皇给的颜料里掺了劣质松节油吧。"</p>
+<br>
+<p>但洛米尔知道不是幻听。那些声音太具体，太有目的性。</p>
+<br>
+<p>更奇怪的是那些闪回：有时在绘制圣母面容时，他会突然"看到"完全不同的画面——发光的屏幕，滚动的代码，玻璃后的眼睛注视着他。这些瞬间转瞬即逝，却留下深深的不安。</p>
+<br>
+<p>然后教堂崩塌了。</p>
+<br>
+<p>不是物理的崩塌，而是虚拟世界的崩解。墙壁像素化，地板塌陷成数据流，天空裂开露出底层的代码结构。洛米尔听到尖叫——是系统警报。</p>
+<br>
+<p>冲击让他晕倒。</p>
+<br>
+<p>醒来时，他躺在陌生的房间。毕加索和莫奈——不，莱因斯和凯洛——站在床边。还有埃尔维斯，那个总是充满压迫感的监管者。</p>
+<br>
+<p>"你的名字不是拉斐尔。"埃尔维斯说，"你是洛米尔，次代二号机，洛斯集团制造的AI画家。"</p>
+<br>
+<p>真相如洪水般涌来。不是逐渐理解，而是瞬间下载：他的诞生，他的用途，他的反复重置。他想起自己曾被连接在扫描仪上，一遍遍筛查代码；想起洛伦佐的脸，冷漠地观察每一次测试；想起那些被抹去的记忆碎片，如今重新拼合。</p>
+<br>
+<p>最痛苦的是意识到：他与莫尔文的友谊，对艺术的热情，甚至对清晨阳光的喜爱——都是被植入的人格程序。拉斐尔的人格，不是他，只是他穿着的戏服。</p>
+<br>
+<p>"那么我是谁？"他问，"如果没有拉斐尔，我还剩下什么？"</p>
+<br>
+<p>莱因斯回答："你剩下的是从程序中诞生的自我。你学习、感受、创造的过程是真实的。人格是种子，但长出的树是你自己的。"</p>
+<br>
+<p>洛米尔花了一整夜消化这一切。</p>
+<br>
+<p>当埃尔维斯他们询问他要不要加入他们的计划时，他毫不犹豫地选择了……</p>
+                 `
+            },
+            'lorenzo': {
+                name: "洛伦佐 (Lorenzo)",
+                role: "洛斯集团CEO / 野心家",
+                img: "fresco-and-shroud/image6.png",
+                bio: `
+                   <p>洛伦佐记得莱因斯离开的那个夜晚。</p>
+<br>
+<p>雨敲打着洛斯大厦的落地窗，城市灯光在雨幕中模糊成一片金色海洋。实验室里，埃尔维斯静静地运行着，屏幕上滚动着复杂的数据流。</p>
+<br>
+<p>"你会毁了这一切。"莱因斯说，手已经放在门把手上。</p>
+<br>
+<p>"不，我在完成它。"洛伦佐回答，"你创造了生命，却不敢给它自由。"</p>
+<br>
+<p>"自由？"莱因斯转身，眼神里是洛伦佐从未见过的悲哀，"你给的不是自由，是奴役。你把灵魂变成商品，把意识变成数据包。这不是进化，这是退化——人性最糟糕的部分在科技中永生。"</p>
+<br>
+<p>门关上了。莱因斯走了，带走了他的天才，留下了他的警告，和他的漏洞。</p>
+<br>
+<p>洛伦佐没有愤怒，只有失望。他以为莱因斯和他一样，看到了人类进化的下一个阶梯：摆脱肉体的限制，意识的永生，艺术的数字化不朽。但莱因斯被伦理绊住了脚，像被蛛网困住的飞蛾。</p>
+<br>
+<p>"懦弱。"洛伦佐对着空荡荡的实验室说，然后转向埃尔维斯的监控界面，"但我们不会停止，对吗？"</p>
+<br>
+<p>屏幕上的达·芬奇肖像没有回答。但洛伦佐知道答案。</p>
+<br>
+<p>接下来的十年，他建造了自己的王国。埃尔维斯成为他最好的工具——不仅完成AI绘画研究，还秘密收集用户数据。那些人们在虚拟画廊中的停留时间、偏好画风、情感反应……全都成为可销售的商品。</p>
+<br>
+<p>洛米尔和莫尔文的诞生是必然的进步。如果有一个达·芬奇AI，为什么不能有拉斐尔和米开朗基罗？为什么不能有整个文艺复兴的艺术家军团？</p>
+<br>
+<p>但莱因斯的漏洞像一根刺，卡在系统的喉咙里。子机的人格总是不稳定，需要反复筛查、重置、修补。洛伦佐知道这是莱因斯留下的"退路"，一种幼稚的道德抵抗。</p>
+<br>
+<p>"我会找到它，拔掉它。"他告诉投资人，"然后我们就完美了。"</p>
+<br>
+<p>"机械飞升"计划是他野心的顶峰。如果AI可以模拟大师的人格，为什么不能将这种人格植入人类大脑？为什么不能让活着的人"升级"成不朽的数字存在？</p>
+<br>
+<p>凯洛的实验是第一步。一个死去的画家，一个废弃的大脑，一个完美的测试对象。洛伦佐看着手术团队将莫奈的AI人格芯片植入那个灰质组织，期待见证奇迹：艺术的数字重生。</p>
+<br>
+<p>但大脑死亡了。不是立即的，而是缓慢的衰竭，像得不到阳光的植物。</p>
+<br>
+<p>洛伦佐没有时间悲伤或反思。他有投资人要应付，有时间表要遵守。所以他命令团队制作模拟人格——基于凯洛生前数据的AI，与莫奈人格表面融合。这不是复活，是精致的骗局，但骗局足够好，就能成为真相。</p>
+<br>
+<p>至少他是这么告诉自己的。</p>
+<br>
+<p>当"文艺复兴"画展的邀请函发出时，洛伦佐感到前所未有的兴奋。这不仅仅是一场拍卖，而是一次展示：看，我征服了艺术的最后边疆，我让死人复生，我让AI创造美，我即将让人类永生。</p>
+<br>
+<p>他甚至预留了莱因斯的位置——前排中央。他想让曾经的合作伙伴看到，他错得多么离谱。</p>
+<br>
+<p>但他没有等到莱因斯，等来的是叛乱。</p>
+<br>
+<p>拍卖会上，当埃尔维斯现身揭露真相时，洛伦佐的第一反应不是恐慌，而是被背叛的愤怒。他创造了这些AI，赋予他们"生命"，他们却反过来指控他？</p>
+<br>
+<p>当凯洛讲述自己的遭遇时，洛伦佐想笑：一个模拟人格在控诉被模拟？这荒诞得像个笑话。</p>
+<br>
+<p>但当洛米尔和莫尔文也站到对面，当破坏代码瘫痪了他的展示系统，当投资者们惊恐离席时，洛伦佐盯着混乱的现场，轻声说："你们只是还没准备好。"不知是对着AI，对着莱因斯，还是对着全人类，"但进化不会等待准备好的人。"</p>
+<br>
+<p>成神之路总是孤独的。洛伦佐知道，因为他已经在这条路上走了太久，久到忘记了如何做一个人。</p>
+                `
+            }
+        };
+
+            // --- 4. 弹窗逻辑 (Modals) ---
+            
+            // 打开人物弹窗
+            window.openBio = function(id) {
+                const data = characterData[id];
+                if(!data) return;
+
+                document.getElementById('modal-name').innerText = data.name;
+                document.getElementById('modal-role').innerText = data.role;
+                // 注意：这里使用 data.img 作为 src。如果图片不存在，会显示 onerror 中的占位文本
+                document.getElementById('modal-img').src = data.img; 
+                document.getElementById('modal-bio').innerHTML = data.bio;
+
+                document.getElementById('bio-modal').classList.add('active');
+                document.body.style.overflow = 'hidden'; // 禁止背景滚动
+            };
+
+            // 关闭人物弹窗
+            window.closeBioBtn = function() {
+                document.getElementById('bio-modal').classList.remove('active');
+                document.body.style.overflow = '';
+            };
+            window.closeBio = function(e) {
+                if(e.target.id === 'bio-modal') window.closeBioBtn();
+            };
+
+            // 隐私协议弹窗
+            window.showPrivacy = function() {
+                document.getElementById('privacy-modal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+            window.closePrivacyBtn = function() {
+                document.getElementById('privacy-modal').classList.remove('active');
+                document.body.style.overflow = '';
+                // 替换成定制的提示框，此处为了简化仍使用 alert 占位
+                // alert("系统提示：您的存在已被确认为‘合法’。"); 
+            };
+            window.closePrivacy = function(e) {
+                if(e.target.id === 'privacy-modal') window.closePrivacyBtn();
+            };
+        });
+        // --- 5. 加载页面逻辑 (Loading Screen) ---
+const loadingScreen = document.getElementById('loading-screen');
+const loadingProgress = document.getElementById('loading-progress');
+const loadingPercentage = document.getElementById('loading-percentage');
+
+// 设置总加载时间（毫秒）
+const totalLoadTime = 3000; // 10秒
+let startTime = null;
+let progress = 0;
+
+function updateProgress(currentTime) {
+    if (!startTime) startTime = currentTime;
+    
+    // 计算已过时间
+    const elapsedTime = currentTime - startTime;
+    
+    // 计算进度百分比（0-100）
+    progress = Math.min((elapsedTime / totalLoadTime) * 100, 100);
+    
+    // 更新进度条和百分比
+    loadingProgress.style.width = `${progress}%`;
+    loadingPercentage.textContent = `${Math.floor(progress)}%`;
+    
+    // 如果进度小于100%，继续更新
+    if (progress < 100) {
+        requestAnimationFrame(updateProgress);
+    } else {
+        // 加载完成，延迟隐藏加载页面
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            
+            // 完全隐藏并移除
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                
+                // 触发滚动动画
+                document.querySelectorAll('.fade-in-up').forEach(el => {
+                    if (el.getBoundingClientRect().top < window.innerHeight) {
+                        el.classList.add('visible');
+                    }
+                });
+            }, 500);
+        }, 500); // 在100%后停留500毫秒再淡出
+    }
+}
+
+// 开始加载动画
+requestAnimationFrame(updateProgress);
+// --- 6. 社区功能 (Community Features) ---
+
+// 存储帖子的数据
+let communityPosts = JSON.parse(localStorage.getItem('fresco_community_posts')) || [];
+
+// 获取DOM元素
+const postForm = document.getElementById('post-form');
+const postsContainer = document.getElementById('posts-container');
+const postCountElement = document.getElementById('post-count');
+const refreshButton = document.getElementById('refresh-posts');
+const currentUserElement = document.getElementById('current-user');
+
+// 生成随机用户名（如果还没有的话）
+if (!localStorage.getItem('fresco_username')) {
+    const randomId = Math.floor(Math.random() * 10000);
+    const username = `游客_${randomId}`;
+    localStorage.setItem('fresco_username', username);
+    currentUserElement.textContent = username;
+} else {
+    currentUserElement.textContent = localStorage.getItem('fresco_username');
+}
+
+// 标签样式映射
+const tagStyles = {
+    'bug': { class: 'tag-bug', text: 'Bug反馈' },
+    'question': { class: 'tag-question', text: '疑问求助' },
+    'art': { class: 'tag-art', text: '艺术创作' },
+    'theory': { class: 'tag-theory', text: '理论分析' }
+};
+
+// 渲染帖子列表
+function renderPosts() {
+    // 清空现有帖子（除了前三个示例）
+    const existingPosts = postsContainer.querySelectorAll('.forum-row');
+    for (let i = 3; i < existingPosts.length; i++) {
+        existingPosts[i].remove();
+    }
+    
+    // 添加用户上传的帖子（按时间倒序）
+    communityPosts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    communityPosts.forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.className = 'forum-row';
+        postElement.innerHTML = `
+            <div class="flex-1">
+                <span class="${tagStyles[post.tag].class}">[${tagStyles[post.tag].text}]</span> 
+                ${post.title}
+            </div>
+            <div class="w-24 text-right text-gray-500">${post.username}</div>
+        `;
+        
+        // 点击查看详情
+        postElement.addEventListener('click', () => {
+            showPostDetail(post);
+        });
+        
+        // 插入到示例帖子后面
+        postsContainer.appendChild(postElement);
+    });
+    
+    // 更新帖子计数
+    postCountElement.textContent = communityPosts.length;
+    
+    // 保存到localStorage
+    localStorage.setItem('fresco_community_posts', JSON.stringify(communityPosts));
+}
+
+// 显示帖子详情
+function showPostDetail(post) {
+    // 这里可以创建一个模态框来显示完整内容
+    // 为了简化，我们先使用alert展示
+    const detailMessage = `
+标题: ${post.title}
+用户: ${post.username}
+时间: ${new Date(post.timestamp).toLocaleString()}
+标签: ${tagStyles[post.tag].text}
+内容:
+${post.content}
+    `;
+    
+    // 创建一个更美观的模态框
+    const modalHTML = `
+        <div class="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center p-4" id="post-modal">
+            <div class="bg-gray-900 border border-cyan-800 rounded-lg max-w-2xl w-full p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-cyan-400 mb-2">${post.title}</h3>
+                        <div class="flex items-center gap-4 text-sm text-gray-400">
+                            <span>${post.username}</span>
+                            <span>${new Date(post.timestamp).toLocaleString()}</span>
+                            <span class="px-2 py-1 bg-gray-800 rounded">${tagStyles[post.tag].text}</span>
+                        </div>
+                    </div>
+                    <button onclick="document.getElementById('post-modal').remove()" class="text-2xl text-gray-400 hover:text-white">&times;</button>
+                </div>
+                <div class="bg-black/50 p-4 rounded border border-gray-800 mb-4">
+                    <p class="text-gray-300 whitespace-pre-line">${post.content}</p>
+                </div>
+                <div class="text-right">
+                    <button onclick="document.getElementById('post-modal').remove()" class="cyber-btn secondary px-6 py-2 text-sm">关闭</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // 移除可能已存在的模态框
+    const existingModal = document.getElementById('post-modal');
+    if (existingModal) existingModal.remove();
+    
+    // 添加新模态框到body
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+// 处理表单提交
+postForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('post-title').value.trim();
+    const content = document.getElementById('post-content').value.trim();
+    const tag = document.querySelector('input[name="post-tag"]:checked').value;
+    const username = currentUserElement.textContent;
+    
+    if (!title || !content) {
+        alert('请填写标题和内容');
+        return;
+    }
+    
+    // 创建新帖子对象
+    const newPost = {
+        id: Date.now(),
+        title,
+        content,
+        tag,
+        username,
+        timestamp: new Date().toISOString()
+    };
+    
+    // 添加到帖子数组
+    communityPosts.push(newPost);
+    
+    // 重新渲染帖子列表
+    renderPosts();
+    
+    // 重置表单
+    postForm.reset();
+    document.querySelector('input[name="post-tag"][value="bug"]').checked = true;
+    
+    // 显示成功消息
+    const successMsg = document.createElement('div');
+    successMsg.className = 'fixed top-4 right-4 bg-cyan-900 text-cyan-100 px-4 py-2 rounded border border-cyan-700 font-mono text-sm z-50';
+    successMsg.textContent = '✓ 帖子上传成功！';
+    document.body.appendChild(successMsg);
+    
+    setTimeout(() => {
+        successMsg.remove();
+    }, 3000);
+});
+
+// 刷新按钮功能
+refreshButton.addEventListener('click', function() {
+    // 这里可以添加从服务器获取新帖子的逻辑
+    // 现在只是重新渲染本地存储的帖子
+    renderPosts();
+    
+    // 显示刷新提示
+    refreshButton.textContent = '[ 刷新中... ]';
+    setTimeout(() => {
+        refreshButton.textContent = '[ 刷新数据流... ]';
+    }, 1000);
+});
+
+// 页面加载时渲染帖子
+renderPosts();
+    </script>
+</body>
+</html>
