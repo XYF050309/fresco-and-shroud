@@ -45,8 +45,9 @@
         .hero-container {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: -1;
+            z-index: 0; /* 改为 0，避免被 body 背景遮住（并给页面内容留出 overlay 层） */
             overflow: hidden;
+            pointer-events: none; /* 背景不拦截鼠标/触摸事件 */
         }
         .layer-code {
             position: absolute; width: 100%; height: 100%;
@@ -54,16 +55,24 @@
             background: #000 url('https://placehold.co/1920x1080/000/2DD4BF?text=DATA%20CODE') no-repeat center center; 
             background-size: cover; 
             filter: grayscale(80%) brightness(50%);
+            pointer-events: none;
         }
         .layer-fresco {
             position: absolute; width: 100%; height: 100%;
             /* 假装加载壁画图，实际应用文艺复兴风格背景 */
             background: #000 url('https://placehold.co/1920x1080/D4A574/000?text=FRESCO%20MURAL') no-repeat center center; 
             background-size: cover;
-            /* 核心：通过 mask-image 挖空，露出底层 */
-            mask-image: radial-gradient(circle 200px at var(--cursor-x, 50%) var(--cursor-y, 50%), transparent 0%, black 50%);
-            -webkit-mask-image: radial-gradient(circle 200px at var(--cursor-x, 50%) var(--cursor-y, 50%), transparent 0%, black 50%);
-            transition: mask-image 0.1s ease;
+            /* 提供初始居中挖空，使用百分比半径以适配不同分辨率。提供 -webkit 前缀以增强兼容性 */
+            -webkit-mask-image: radial-gradient(circle 12% at 50% 50%, transparent 0%, rgba(0,0,0,1) 35%);
+            mask-image: radial-gradient(circle 12% at 50% 50%, transparent 0%, rgba(0,0,0,1) 35%);
+            -webkit-mask-mode: alpha;
+            mask-mode: alpha;
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            transition: -webkit-mask-image 0.08s linear, mask-image 0.08s linear;
+            pointer-events: none;
         }
         
         /* 赛博朋克按钮 */
@@ -1175,17 +1184,30 @@
             const frescoLayer = document.getElementById('fresco-layer');
 
             if (heroBg && frescoLayer) {
-                document.addEventListener('mousemove', (e) => {
-                    // 获取鼠标位置
-                    const x = e.clientX;
-                    const y = e.clientY;
-                    
-                    // 动态更新 CSS 蒙版，创建“擦除”效果
-                    const maskStyle = `radial-gradient(circle 250px at ${x}px ${y}px, transparent 0%, black 50%)`;
-                    
+                // Helper：设置 mask（使用像素坐标）
+                function setMaskAt(clientX, clientY, radius = 250) {
+                    const maskStyle = `radial-gradient(circle ${radius}px at ${clientX}px ${clientY}px, transparent 0%, black 50%)`;
                     frescoLayer.style.webkitMaskImage = maskStyle;
                     frescoLayer.style.maskImage = maskStyle;
+                }
+
+                // 初始：居中挖空，避免用户未移动鼠标时看不到任何效果
+                const rect = heroBg.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                setMaskAt(centerX, centerY, 250);
+
+                // 鼠标移动更新 mask
+                document.addEventListener('mousemove', (e) => {
+                    setMaskAt(e.clientX, e.clientY, 250);
                 });
+
+                // 触摸支持
+                window.addEventListener('touchmove', (e) => {
+                    if (e.touches && e.touches[0]) {
+                        setMaskAt(e.touches[0].clientX, e.touches[0].clientY, 250);
+                    }
+                }, { passive: true });
             }
 
             // --- 2. 滚动动画 (Scroll Animations) ---
