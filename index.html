@@ -339,7 +339,7 @@
         </div>
     </section>
 
-        <!-- 2. 游戏介绍 (Overview) - 基于剧本重制 -->
+        <!-- 2. 游戏介绍 (Overview) -->
     <section id="overview" class="py-24 bg-black/90 border-t border-gray-800 relative overflow-hidden">
         <!-- 装饰背景：壁画纹理 -->
         <div class="absolute inset-0 opacity-5">
@@ -768,12 +768,15 @@
     </div>
 </section>
 
-        <!-- 4. 社区 (Community) - 修改版 -->
+        <!-- 4. 社区 (Community) -->
     <section id="community" class="py-20 bg-black border-t border-cyan-900/30">
         <div class="max-w-5xl mx-auto px-4">
             <h2 class="section-title text-center mb-4 text-cyan-400">&lt; 加密频道 &gt;</h2>
             <p class="text-center text-gray-500 font-mono text-sm mb-10">// 警告：请勿上传敏感信息。所有内容将公开可见。</p>
-            
+        <!-- 背景层 -->
+         <div class="absolute inset-0 bg-black z-[-1]"></div>
+        <div class="max-w-5xl mx-auto px-4 relative z-10">
+                
             <!-- 上传表单 -->
             <div class="terminal-window fade-in-up mb-10">
                 <div class="terminal-header">
@@ -881,6 +884,8 @@
                 </div>
             </div>
         </div>
+    </div>
+            
     </section>
 
     <!-- 5. 下载与服务 (Download) -->
@@ -1792,6 +1797,7 @@ renderPosts();
 </body>
 
 </html>
+
 
 
 
