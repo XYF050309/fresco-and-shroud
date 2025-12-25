@@ -364,6 +364,97 @@
         .delay-100 { transition-delay: 0.1s; }
         .delay-200 { transition-delay: 0.2s; }
 
+        /* 修复平台卡片样式 - 确保它不被覆盖 */
+    .platform-card {
+        background: linear-gradient(145deg, rgba(17, 24, 39, 0.95) 0%, rgba(0, 0, 0, 0.95) 100%) !important;
+        border: 1px solid rgba(45, 212, 191, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 2rem !important;
+        position: relative !important;
+        overflow: hidden !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+        backdrop-filter: blur(10px) !important;
+        z-index: 1 !important;
+    }
+    
+    .platform-card::before {
+        content: '' !important;
+        position: absolute !important;
+        inset: 0 !important;
+        background: linear-gradient(
+            135deg,
+            rgba(45, 212, 191, 0.1) 0%,
+            rgba(17, 24, 39, 0.3) 50%,
+            rgba(45, 212, 191, 0.1) 100%
+        ) !important;
+        opacity: 0.3 !important;
+        z-index: -1 !important;
+        border-radius: 12px !important;
+    }
+    
+    .platform-card:hover {
+        border-color: var(--cyan) !important;
+        transform: translateY(-5px) !important;
+        box-shadow: 
+            0 15px 40px rgba(45, 212, 191, 0.25),
+            0 0 0 1px rgba(45, 212, 191, 0.4) !important;
+    }
+    
+    /* 各个平台的特色边框颜色 */
+    .platform-card:nth-child(1) {
+        border-color: rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    .platform-card:nth-child(1):hover {
+        border-color: #3b82f6 !important;
+        box-shadow: 
+            0 15px 40px rgba(59, 130, 246, 0.25),
+            0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+    }
+    
+    .platform-card:nth-child(2) {
+        border-color: rgba(156, 163, 175, 0.3) !important;
+    }
+    
+    .platform-card:nth-child(2):hover {
+        border-color: #9ca3af !important;
+        box-shadow: 
+            0 15px 40px rgba(156, 163, 175, 0.25),
+            0 0 0 1px rgba(156, 163, 175, 0.4) !important;
+    }
+    
+    .platform-card:nth-child(3) {
+        border-color: rgba(245, 158, 11, 0.3) !important;
+    }
+    
+    .platform-card:nth-child(3):hover {
+        border-color: #f59e0b !important;
+        box-shadow: 
+            0 15px 40px rgba(245, 158, 11, 0.25),
+            0 0 0 1px rgba(245, 158, 11, 0.4) !important;
+    }
+
+    /* 确保卡片内容可见 */
+    .platform-card h3,
+    .platform-card p,
+    .platform-card li,
+    .platform-card span {
+        position: relative !important;
+        z-index: 2 !important;
+        color: #e5e7eb !important;
+    }
+    
+    .platform-card ul li span:first-child {
+        color: var(--cyan) !important;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+        .platform-card {
+            padding: 1.5rem !important;
+        }
+    }
         /* 响应式调整 */
         @media (max-width: 768px) {
             .section-title { font-size: 2rem; }
@@ -1909,4 +2000,5 @@ renderPosts();
 </body>
 
 </html>
+
 
