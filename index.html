@@ -222,6 +222,129 @@
             border-bottom: 1px solid #1f2937;
             padding-bottom: 10px; margin-bottom: 20px;
         }
+         /* 赛博朋克风格平台卡片 */
+    .platform-card {
+        background: linear-gradient(145deg, rgba(15, 23, 42, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
+        border: 1px solid;
+        border-image: linear-gradient(135deg, rgba(45, 212, 191, 0.1), rgba(17, 24, 39, 0.3), rgba(45, 212, 191, 0.1)) 1;
+        border-radius: 8px;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+    
+    .platform-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            135deg,
+            transparent 0%,
+            rgba(45, 212, 191, 0.05) 50%,
+            transparent 100%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .platform-card::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, 
+            transparent 0%,
+            rgba(45, 212, 191, 0.1) 50%,
+            transparent 100%);
+        z-index: -1;
+        border-radius: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .platform-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 
+            0 8px 30px rgba(45, 212, 191, 0.15),
+            0 0 0 1px rgba(45, 212, 191, 0.2);
+    }
+    
+    .platform-card:hover::before,
+    .platform-card:hover::after {
+        opacity: 1;
+    }
+    
+    /* Windows卡片特殊效果 */
+    .platform-card:nth-child(1) {
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+    
+    .platform-card:nth-child(1):hover {
+        box-shadow: 
+            0 8px 30px rgba(59, 130, 246, 0.15),
+            0 0 0 1px rgba(59, 130, 246, 0.2);
+    }
+    
+    .platform-card:nth-child(1)::after {
+        background: linear-gradient(45deg, 
+            transparent 0%,
+            rgba(59, 130, 246, 0.1) 50%,
+            transparent 100%);
+    }
+    
+    /* macOS卡片特殊效果 */
+    .platform-card:nth-child(2) {
+        border-color: rgba(107, 114, 128, 0.2);
+    }
+    
+    .platform-card:nth-child(2):hover {
+        box-shadow: 
+            0 8px 30px rgba(107, 114, 128, 0.15),
+            0 0 0 1px rgba(107, 114, 128, 0.2);
+    }
+    
+    .platform-card:nth-child(2)::after {
+        background: linear-gradient(45deg, 
+            transparent 0%,
+            rgba(107, 114, 128, 0.1) 50%,
+            transparent 100%);
+    }
+    
+    /* Linux卡片特殊效果 */
+    .platform-card:nth-child(3) {
+        border-color: rgba(245, 158, 11, 0.2);
+    }
+    
+    .platform-card:nth-child(3):hover {
+        box-shadow: 
+            0 8time 30px rgba(245, 158, 11, 0.15),
+            0 0 0 1px rgba(245, 158, 11, 0.2);
+    }
+    
+    .platform-card:nth-child(3)::after {
+        background: linear-gradient(45deg, 
+            transparent 0%,
+            rgba(245, 158, 11, 0.1) 50%,
+            transparent 100%);
+    }
+    
+    /* 平台图标容器 */
+    .platform-card .platform-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 2.5rem;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
         /* 滚动条美化 */
         .custom-scroll::-webkit-scrollbar { width: 6px; }
@@ -1786,3 +1909,4 @@ renderPosts();
 </body>
 
 </html>
+
